@@ -6,6 +6,13 @@ Built using **CrewAI**, **FastAPI**, **Streamlit**, **Docker**, and **LLMs**.
 
 ---
 
+## Quick Access
+
+* 🌐 Live Demo: https://resume-optimizer-ui-17go.onrender.com/
+* 🐙 GitHub Repository: https://github.com/Zahraa-Alkerdi/AI-Resume-Application
+
+---
+
 ## 📌 Overview
 
 Applying for jobs often requires tailoring resumes and cover letters to specific job descriptions.
