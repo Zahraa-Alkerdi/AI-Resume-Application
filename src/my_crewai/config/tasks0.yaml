@@ -1,0 +1,114 @@
+analyzing_task:
+  description: >
+    Analyze the following:
+    Resume: {resume}
+    Cover Letter: {cover_letter}
+    Job Requirements: {job_requirements}
+  expected_output: >
+    A structured JSON containing:
+    - missing_keywords
+    - strengths
+    - weaknesses
+    - mismatches
+    - improvement_suggestions
+  agent: Analyzer
+
+editing_task:
+  description: >
+    You are given:
+  
+    1. Resume: {resume}
+    2. Cover Letter: {cover_letter}
+    3. Analysis from previous task:
+    
+    Using the analysis, rewrite and improve BOTH the resume and cover letter.
+    
+    Focus on:
+    - Fixing mismatches with job requirements
+    - Adding missing keywords naturally
+    - Strengthening weak sections
+    - Keeping all information truthful (DO NOT invent experience or skills)
+
+  expected_output: >
+    A fully rewritten and improved version of:
+
+    1. Resume (well-structured and professional)
+    2. Cover Letter (tailored to the job)
+
+    Output format:
+
+    RESUME:
+    <rewritten resume>
+
+    COVER LETTER:
+    <rewritten cover letter>
+  agent: Editor
+
+ats_optimization_task:
+  description: >
+    You are given:
+
+    1. Edited Resume and Cover Letter from previous task:
+    2. Job Requirements: {job_requirements}
+
+    Optimize both the resume and cover letter to be ATS-friendly.
+
+    Focus on:
+    - Clear section structure (Summary, Skills, Experience, Education)
+    - Proper use of keywords from job requirements
+    - Strong, concise bullet points
+    - Clean and readable formatting
+    - Consistent headings and spacing
+    - Avoiding complex formatting (no tables, no graphics)
+
+    Do NOT:
+    - Add fake experience or skills
+    - Change the meaning of the content
+
+  expected_output: >
+    A fully optimized ATS-friendly version of:
+
+    RESUME:
+    - Clear sections (Summary, Skills, Experience, Education)
+    - Bullet points for experience
+    - Keyword-optimized content
+
+    COVER LETTER:
+    - Professionally structured
+    - Tailored to the job requirements
+    - Clear and concise paragraphs
+
+    Output format:
+
+    RESUME:
+    <ATS-optimized resume>
+
+    COVER LETTER:
+    <ATS-optimized cover letter>
+  agent: ATS_and_Formatting_Specialist
+
+review_task:
+  description: >
+    You are given:
+
+    1. Final ATS-optimized Resume and Cover Letter from previous task:
+    2. Job Requirements: {job_requirements}
+
+    Evaluate the quality of both documents.
+
+    Focus on:
+    - ATS compatibility
+    - Keyword alignment
+    - Clarity and readability
+    - Relevance to the job
+    - Professional tone
+
+  expected_output: >
+    A structured evaluation including:
+
+    - overall_score (0–100)
+    - ATS_score (0–100)
+    - strengths
+    - weaknesses
+    - improvement_suggestions
+  agent: Reviewer

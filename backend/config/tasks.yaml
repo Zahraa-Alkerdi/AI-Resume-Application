@@ -1,0 +1,274 @@
+analyzing_task:
+  description: >
+    Analyze the following:
+    Resume: {resume}
+    Cover Letter: {cover_letter}
+    Job Requirements: {job_requirements}
+
+    IMPORTANT:
+    - Base analysis ONLY on provided text
+    - Do not infer missing technologies or experience
+
+  expected_output: >
+    Return ONLY valid JSON. No markdown, no explanation, no extra text:
+
+    {
+      "missing_keywords": [],
+      "strengths": [],
+      "weaknesses": [],
+      "mismatches": [],
+      "improvement_suggestions": []
+    }
+
+  agent: Analyzer
+
+
+github_analysis_task:
+  description: >
+    Analyze the GitHub repositories of {github_username}
+    in the context of the provided job requirements.
+
+    Focus only on real, verifiable information from:
+    README files, code, dependencies, Dockerfiles, and repository structure.
+
+  expected_output: >
+    Return ONLY valid JSON. No markdown, no explanation:
+
+    {
+      "projects": [
+        {
+          "name": "",
+          "technologies": [],
+          "evidence": [
+            "README snippet or filename or code reference only"
+          ]
+        }
+      ],
+      "skills_detected": [],
+      "frameworks": [],
+      "databases": [],
+      "apis": [],
+      "deployment_tools": []
+    }
+
+  agent: Github_Analyzer
+
+
+editing_task:
+  description: >
+    You are given:
+
+    1. Resume: {resume}
+    2. Cover Letter: {cover_letter}
+    3. Job analysis from Analyzer
+    4. GitHub analysis from Github_Analyzer
+
+    Rewrite BOTH resume and cover letter using ONLY provided data.
+
+    IMPORTANT RULES:
+    - Standardize the Skills section based on the candidate's actual field and background.
+    - Do NOT force software engineering categories if they are not relevant.
+    - Only create categories that match the candidate's real skills and the target job.
+    - If the candidate is technical/software-oriented, use categories such as:
+      Programming Languages, AI & ML, Frameworks & Tools, Core Concepts, Databases, Soft Skills.
+    - If the candidate is non-technical, use more suitable categories such as:
+      Professional Skills, Tools, Domain Knowledge, Communication Skills, Certifications, Soft Skills.
+    - Never add empty skill categories.
+    - Never invent skills to fill a category.
+    - Remove duplicate skills across categories.
+    - Preserve truthful skills and ensure each skill appears only once in the most appropriate category.
+    - Do NOT invent new experience, projects, or skills
+    - Rewrite the professional summary to be concise, professional, ATS-friendly, and recruiter-focused.
+    - The summary should clearly communicate the candidate's background, strongest skills, areas of expertise, and career focus.
+    - Highlight the candidate's most relevant technologies, projects, and achievements when supported by the resume or GitHub analysis.
+    - Keep the summary between 3 and 5 lines.
+    - Avoid generic statements such as "hard-working", "passionate", or "motivated" unless supported by evidence.
+    - Use professional resume language suitable for the target job.
+    - Ensure clean ATS-friendly structure
+    - Preserve all contact information from the original resume if found
+    - Never remove name, title, location, phone, email, LinkedIn or GitHub
+    - Preserve project bullet points
+    - Multiple project achievements must remain separate bullet items
+    - Skills and experience must be lists of strings
+    - Projects, education, and certifications must be structured objects
+
+  expected_output: >
+    Return ONLY valid JSON. No markdown, no explanation:
+
+    {
+      "resume": {
+        "name": "",
+        "title": "",
+        "location": "",
+        "email": "",
+        "phone": "",
+        "linkedin": "",
+        "github": "",
+        "summary": "",
+        "skills": [
+          {
+            "category": "",
+            "items": []
+          }
+        ],
+        "projects": [
+          {
+            "name": "",
+            "achievements": []
+          }
+        ],
+        "education": [
+          {
+            "degree": "",
+            "university": "",
+            "year": ""
+          }
+        ],
+        "certifications": [
+          {
+            "name": "",
+            "description": ""
+          }
+        ]
+      },
+      "cover_letter": {
+        "content": ""
+      }
+    }
+
+  agent: Editor
+
+  context:
+    - analyzing_task
+    - github_analysis_task
+
+
+ats_optimization_task:
+  description: >
+    You are a Senior ATS Optimization Specialist.
+
+    You will receive the structured resume and cover letter from the Editor agent.
+
+    Your job is NOT to rewrite the resume from scratch.
+    Your job is to preserve the Editor's structure while improving ATS compatibility,
+    keyword alignment, clarity, and consistency.
+
+    CRITICAL RULES:
+    - Return ONLY valid JSON
+    - Do NOT output markdown
+    - Do NOT output explanations outside the JSON
+    - Do NOT invent any new information
+    - Do NOT remove truthful information from the Editor output
+    - Do NOT flatten categorized skills into a simple list
+    - Do NOT remove skill categories
+    - Do NOT create duplicate skills across categories
+    - Do NOT merge project achievements into one paragraph
+    - Preserve project bullet points as separate achievements
+    - Preserve name, title, location, email, phone, LinkedIn, and GitHub if available
+    - Preserve the main resume sections: Summary, Skills, Projects, Education, Certifications, Contact
+
+    SKILLS RULES:
+    - skills MUST remain a list of category objects
+    - Each skill category must contain:
+      - category
+      - items
+    - Keep skill categories created by the Editor when they are relevant
+    - You may slightly rename categories for clarity
+    - You may reorder skills for ATS relevance
+    - Remove duplicates only
+    - Never convert skills into a flat list of strings
+
+    PROJECT RULES:
+    - projects MUST remain structured objects
+    - Each project must contain:
+      - name
+      - achievements
+    - Keep achievements as separate bullet-style strings
+    - Improve wording only when it strengthens clarity or ATS keyword alignment
+    - Do not add technologies unless they were present in the Editor output, original resume, or GitHub analysis
+
+    CONTENT RULES:
+    - Use the Editor output as the source of truth
+    - Keep only information provided in earlier tasks
+    - Improve clarity and ATS keyword alignment only
+    - Normalize wording without changing meaning
+    - Ensure relevant job keywords are naturally integrated when supported by evidence
+    - Keep the resume clean, professional, and recruiter-friendly
+
+    OUTPUT RULE:
+    Return ONLY valid JSON that matches ATSOptimizationSchema exactly.
+
+  expected_output: >
+    {
+      "ats_resume": {
+        "name": "",
+        "title": "",
+        "location": "",
+        "email": "",
+        "phone": "",
+        "linkedin": "",
+        "github": "",
+        "summary": "",
+        "skills": [
+          {
+            "category": "",
+            "items": []
+          }
+        ],
+        "projects": [
+          {
+            "name": "",
+            "achievements": []
+          }
+        ],
+        "education": [
+          {
+            "degree": "",
+            "university": "",
+            "year": ""
+          }
+        ],
+        "certifications": [
+          {
+            "name": "",
+            "description": ""
+          }
+        ]
+      },
+      "ats_cover_letter": "",
+      "keywords_used": [],
+      "formatting_notes": []
+    }
+
+  agent: ATS_and_Formatting_Specialist
+
+  context:
+    - editing_task
+
+
+review_task:
+  description: >
+    Evaluate final ATS-optimized resume and cover letter.
+
+    Focus on:
+    - ATS compatibility
+    - Keyword alignment
+    - Clarity
+    - Professional structure
+    - Formatting consistency
+
+  expected_output: >
+    Return ONLY valid JSON:
+
+    {
+      "overall_score": 0,
+      "ATS_score": 0,
+      "strengths": [],
+      "weaknesses": [],
+      "improvement_suggestions": []
+    }
+
+  agent: Reviewer
+
+  context:
+    - ats_optimization_task
