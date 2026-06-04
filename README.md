@@ -150,7 +150,7 @@ project/
 
 ### ATS Resume Output
 
-![ATS Resume](screenshots/ats_resume.png)
+![ATS Resume](screenshots/ats-resume.png)
 
 ---
 ## 🚀 Running Locally
